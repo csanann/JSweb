@@ -4,27 +4,50 @@
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
 
-  // view.js
-  var require_view = __commonJS({
-    "view.js"(exports, module) {
-      var View2 = class {
+  // notesModel.js
+  var require_notesModel = __commonJS({
+    "notesModel.js"(exports, module) {
+      var NotesModel2 = class {
         constructor() {
-          this.mainContainerEl = document.querySelector("#main-container");
-          console.log(this.mainContainerEl);
+          this.notes = [];
         }
-        addParagraph() {
-          const newParagraph = document.createElement("p");
-          newParagraph.innerText = "I was created dynamically by JS";
-          this.mainContainerEl.append(newParagraph);
+        addNote(note) {
+          this.notes.push(note);
+        }
+        getNotes() {
+          return this.notes;
         }
       };
-      module.exports = View2;
+      module.exports = NotesModel2;
+    }
+  });
+
+  // notesView.js
+  var require_notesView = __commonJS({
+    "notesView.js"(exports, module) {
+      var NotesView2 = class {
+        constructor(model2) {
+          this.model = model2;
+        }
+        displayNotes() {
+          const notes = this.model.getNotes();
+          notes.forEach((note) => {
+            const div = document.createElement("div");
+            div.className = "note";
+            div.textContent = note;
+            document.body.append(div);
+          });
+        }
+      };
+      module.exports = NotesView2;
     }
   });
 
   // index.js
-  var View = require_view();
-  var view = new View();
-  view.addParagraph();
-  view.addParagraph();
+  var NotesModel = require_notesModel();
+  var NotesView = require_notesView();
+  var model = new NotesModel();
+  model.addNote("This is an example note");
+  var view = new NotesView(model);
+  view.displayNotes();
 })();
