@@ -20,7 +20,8 @@
         displayMessage() {
           const newDiv = document.createElement("div");
           newDiv.id = "message";
-          newDiv.textContent = "This message displayed by JS";
+          const inputEl = document.querySelector("#message-input");
+          newDiv.textContent = inputEl.value;
           document.querySelector("#main-container").appendChild(newDiv);
         }
         hideMessage() {

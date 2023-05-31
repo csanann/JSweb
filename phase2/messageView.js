@@ -17,8 +17,9 @@ class MessageView {
     const newDiv = document.createElement('div');
     //give this div element an id of 'message'
     newDiv.id = 'message';
+    const inputEl = document.querySelector('#message-input');
     //set its content
-    newDiv.textContent = 'This message displayed by JS';
+    newDiv.textContent = inputEl.value;
     //append the div to the main container
     document.querySelector('#main-container').appendChild(newDiv);
   }
