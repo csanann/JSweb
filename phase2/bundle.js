@@ -7,21 +7,27 @@
   var require_messageView = __commonJS({
     "messageView.js"(exports, module) {
       var MessageView2 = class {
-        constructor() {
-          this.buttonEl = document.querySelector("#show-message-button");
-          this.buttonEl.addEventListener("click", () => {
+        constructor(notesModel) {
+          this.notesModel = notesModel;
+          this.messageInputEl = document.querySelector("#message-input");
+          this.showMessageButtonEl = document.querySelector("#show-message-button");
+          this.hideMessageButtonEl = document.querySelector("#hide-message-button");
+          this.noteInputEl = document.querySelector("#note-input");
+          this.addNoteButtonEl = document.querySelector("#add-note-button");
+          this.showMessageButtonEl.addEventListener("click", () => {
             this.displayMessage();
           });
-          this.hideButtonEl = document.querySelector("#hide-message-button");
-          this.hideButtonEl.addEventListener("click", () => {
+          this.hideMessageButtonEl.addEventListener("click", () => {
             this.hideMessage();
+          });
+          this.addNoteButtonEl.addEventListener("click", () => {
+            this.addNote();
           });
         }
         displayMessage() {
           const newDiv = document.createElement("div");
           newDiv.id = "message";
-          const inputEl = document.querySelector("#message-input");
-          newDiv.textContent = inputEl.value;
+          newDiv.textContent = this.messageInputEl.value;
           document.querySelector("#main-container").appendChild(newDiv);
         }
         hideMessage() {
@@ -29,6 +35,14 @@
           if (messageDiv) {
             messageDiv.parentNode.removeChild(messageDiv);
           }
+        }
+        addNote() {
+          const noteText = this.noteInputEl.value;
+          this.notesModel.addNote(noteText);
+          this.displayNotes();
+          this.noteInputEl.value = "";
+        }
+        displayNotes() {
         }
       };
       module.exports = MessageView2;

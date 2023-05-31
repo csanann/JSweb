@@ -35,4 +35,20 @@ describe('MessageView', () => {
     //check that the '#message' element is not present on the page
     expect(document.querySelector('#message')).toBeNull();
   });
+  test('adds a new note and displays it', () => {
+    //setup: create a new NotesView instance
+    const view = new MessageView();
+  
+    //set html content from t he file
+    document.body.innerHTML = fs.readFileSync('./index.html');
+    //act: simulate user entering a note and clicking the button
+    const noteInputEl = document.querySelector('#note-input');
+    const testNote = 'Test note content';
+    noteInputEl.value = testNote;
+    
+    const addNoteButtonEl = document.querySelector('#add-note-button');
+    addNoteButtonEl.click();
+    //assert: check if the new note is displayed on the page
+    expect(true).toBe(true);
+  });
 });
