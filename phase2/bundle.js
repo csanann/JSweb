@@ -3,91 +3,71 @@
     return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
 
-  // NotesView.js
-  var require_NotesView = __commonJS({
-    "NotesView.js"(exports, module) {
-      var NotesView = class {
-        constructor(notesModel) {
-          this.notesModel = notesModel;
-          this.noteInputEl = document.querySelector("#note-input");
-          this.addNoteButtonEl = document.querySelector("#add-note-button");
-        }
-        init() {
-          if (this.addNoteButtonEl) {
-            this.addNoteButtonEl.addEventListener("click", () => {
-              this.addNote();
-            });
-          }
-        }
-        addNote() {
-          const noteText = this.noteInputEl.value;
-          this.notesModel.addNote(noteText);
-          this.displayNotes();
-          this.noteInputEl.value = "";
-        }
-        displayNotes() {
-          const noteEls = document.querySelectorAll(".note");
-          noteEls.forEach((el) => el.remove());
-          this.notesModel.notes.forEach((note) => {
-            const noteEl = document.createElement("div");
-            noteEl.textContent = note.text;
-            noteEl.className = "note";
-            document.querySelector("#main-container").appendChild(noteEl);
+  // githubClient.js
+  var require_githubClient = __commonJS({
+    "githubClient.js"(exports, module) {
+      var GithubClient2 = class {
+        getRepoInfo(repoName, callback, view2) {
+          fetch("https://api.github.com/repos/" + repoName).then((response) => response.json()).then((data) => {
+            callback(data);
+            view2.display(data);
           });
         }
       };
-      module.exports = NotesView;
+      module.exports = GithubClient2;
     }
   });
 
-  // messageView.js
-  var require_messageView = __commonJS({
-    "messageView.js"(exports, module) {
-      var NotesView = require_NotesView();
-      var MessageView2 = class {
-        constructor(notesModel) {
-          this.notesModel = notesModel;
-          this.messageInputEl = document.querySelector("#message-input");
-          this.showMessageButtonEl = document.querySelector("#show-message-button");
-          this.hideMessageButtonEl = document.querySelector("#hide-message-button");
-          this.noteInputEl = document.querySelector("#note-input");
-          this.addNoteButtonEl = document.querySelector("#add-note-button");
-          this.showMessageButtonEl.addEventListener("click", () => {
-            this.displayMessage();
-          });
-          this.hideMessageButtonEl.addEventListener("click", () => {
-            this.hideMessage();
-          });
-          this.addNoteButtonEl.addEventListener("click", () => {
-            this.addNote();
-          });
+  // githubModel.js
+  var require_githubModel = __commonJS({
+    "githubModel.js"(exports, module) {
+      var GithubModel2 = class {
+        constructor() {
+          this.repoInfo = null;
         }
-        displayMessage() {
-          const newDiv = document.createElement("div");
-          newDiv.id = "message";
-          newDiv.textContent = this.messageInputEl.value;
-          document.querySelector("#main-container").appendChild(newDiv);
+        setRepoInfo(repoInfo) {
+          this.repoInfo = repoInfo;
         }
-        hideMessage() {
-          const messageDiv = document.querySelector("#message");
-          if (messageDiv) {
-            messageDiv.parentNode.removeChild(messageDiv);
-          }
-        }
-        addNote() {
-          const noteText = this.noteInputEl.value;
-          this.notesView.addNote(noteText);
-          this.notesView.displayNotes();
-          this.noteInputEl.value = "";
-        }
-        displayNotes() {
+        getRepoInfo() {
+          return this.repoInfo;
         }
       };
-      module.exports = MessageView2;
+      module.exports = GithubModel2;
+    }
+  });
+
+  // githubView.js
+  var require_githubView = __commonJS({
+    "githubView.js"(exports, module) {
+      var GithubView2 = class {
+        constructor(model2, client2) {
+          this.model = model2;
+          this.client = client2;
+          const submitButtonEl = document.querySelector("#submit-button");
+          const repoInputEl = document.querySelector("#repo-name-input");
+          submitButtonEl.addEventListener("click", () => {
+            const repoName = repoInputEl.value;
+            this.client.getRepoInfo(repoName, (repoData) => {
+              console.log(repoData);
+              this.display(repoData);
+            });
+          });
+        }
+        display(data) {
+          document.querySelector("#repo-name").textContent = data.full_name;
+          document.querySelector("#repo-description").textContent = data.description;
+          document.querySelector("#repo-avatar").src = data.organization.avatar_url;
+        }
+      };
+      module.exports = GithubView2;
     }
   });
 
   // index.js
-  var MessageView = require_messageView();
-  var view = new MessageView();
+  var GithubClient = require_githubClient();
+  var GithubModel = require_githubModel();
+  var GithubView = require_githubView();
+  var client = new GithubClient();
+  var model = new GithubModel();
+  var view = new GithubView(model, client);
 })();

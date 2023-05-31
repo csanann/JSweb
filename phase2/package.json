@@ -11,11 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "esbuild": "^0.14.2"
-  },
-  "devDependencies": {
-    "jest": "^29.5.0",
-    "jest-environment-jsdom": "^29.5.0",
-    "jsdom": "^22.1.0"
+    "esbuild": "^0.14.2",
+    "jest": "^27.4.3",
+    "jest-fetch-mock": "^3.0.3"
   }
 }

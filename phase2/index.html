@@ -1,18 +1,25 @@
 <!doctype html>
 <html>
     <head>
-        <title>Hello JavaScript</title>
+        <title>Hello fetch</title>
     </head>
     <body>
-      <h1>Hello</h1>
-      <input type="text" id="note-input" /><!--adds form and button/text input to handle user interaction-->>
-      <button id="add-note-button">Add your note</button>
+      <h1>Github repository lookup</h1>
 
-      <input type="text" id="message-input" /><!--adds form to handle user interaction-->>
-      <button id="show-message-button">Click me!</button>
-      <button id="hide-message-button">Click me!</button> <!--adds a  button-->>
-      
-      <div id="main-container"></div>
+      <!-- User input -->
+      <p>Enter a github repository name:</p>
+      <input id="repo-name-input" type="text" placeholder="e.g sinatra/sinatra" />
+      <button id="submit-button">Submit</button>
+
+      <!-- Repository info -->
+      <div>
+        <h3 id="repo-name"></h3>
+
+        <p id="repo-description"></p>
+      </div>
+      <div id="repo-img">
+        <img id="repo-avatar" src="" alt="Github avatar">
+      </div>
 
       <script src="bundle.js"></script>
     </body>
