@@ -12,6 +12,9 @@ describe('Page view', () => {
     document.body.innerHTML = fs.readFileSync('./index.html');
 //creates a new instance of view class that we'll test
     const view = new View();
+    view.addParagraph();
+    view.addParagraph();
+    view.addParagraph();
 //set expecting result, checks if there are 3 'p' elements on the webpage, if not then fail
     expect(document.querySelectorAll('p').length).toBe(3);
   });

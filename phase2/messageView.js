@@ -1,5 +1,7 @@
 //file: MessageView.js
 
+const NotesView = require('./NotesView');
+
 class MessageView {
 
   constructor(notesModel) {
@@ -42,8 +44,10 @@ class MessageView {
 
   addNote() {
     const noteText = this.noteInputEl.value;
-    this.notesModel.addNote(noteText);
-    this.displayNotes();
+    this.notesView.addNote(noteText);
+    // this.notesModel.addNote(noteText);
+    // this.displayNotes();
+    this.notesView.displayNotes();
     this.noteInputEl.value = ''; // clear the input field after a note is added
   }
 
