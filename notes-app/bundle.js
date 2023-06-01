@@ -7,77 +7,104 @@
   // notesClient.js
   var require_notesClient = __commonJS({
     "notesClient.js"(exports, module) {
-      var NotesClient2 = class {
+      var NotesClient = class {
         //
-        getNotes(callback) {
-          fetch("http://localhost:3000/notes").then((response) => response.json()).then((data) => callback(data));
+        //getNotes(callback) {
+        getNotes(onSuccess, onError) {
+          fetch("http://localhost:3000/notes").then((response) => response.json()).then(onSuccess).then(onError);
         }
-        //create async
-        async createNote(content) {
-          const response = await fetch("http://localhost:3000/notes", {
+        createNote(noteContent, onSuccess, onError) {
+          console.log("createNote called with content: ", noteContent);
+          fetch("http://localhost:3000/notes", {
             method: "POST",
             //use post method
-            //set headers to indicate we're sending json data
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json"
+            },
             //json body with the content of the new note
-            body: JSON.stringify({ content })
-          });
-          if (!response.ok) {
-            throw new Error("HTTP error " + response.status);
-          }
-          return response.json();
+            body: JSON.stringify({
+              content: noteContent
+            })
+          }).then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          }).then(onSuccess).catch(onError);
         }
       };
-      module.exports = NotesClient2;
+      module.exports = NotesClient;
     }
   });
 
   // notesView.js
   var require_notesView = __commonJS({
     "notesView.js"(exports, module) {
-      var NotesView2 = class {
-        constructor(model2, client2) {
-          this.model = model2;
-          this.client = client2;
+      var NotesView = class {
+        constructor(model, client) {
+          this.model = model;
+          this.client = client;
         }
-        bindSubmit() {
+        bindSubmit = () => {
           const form = document.getElementById("note-form");
-          form.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            const noteContent = document.getElementById("note-input").value;
-            await this.client.createNote(noteContent);
-            this.displayNotes();
-          });
-        }
+          if (form) {
+            form.addEventListener("submit", async (event) => {
+              event.preventDefault();
+              const noteContent = document.getElementById("note-input").value;
+              await this.client.createNote(
+                noteContent,
+                () => {
+                  this.displayNotes();
+                },
+                () => {
+                  this.displayError();
+                }
+              );
+            });
+          } else {
+            console.log("Form not found!");
+          }
+        };
         displayNotes() {
           const notesList = document.getElementById("note-list");
           notesList.innerHTML = "";
-          notes.forEach((note) => {
+          this.model.getNotes().forEach((note) => {
             const noteElement = document.createElement("li");
             noteElement.textContent = note.content;
             notesList.appendChild(noteElement);
           });
         }
         displayNotesFromApi() {
-          this.client.getNotes((notes2) => {
-            this.model.setNotes(notes2);
-            this.displayNotes();
-          });
+          this.client.getNotes(
+            (notes) => {
+              this.model.setNotes(notes);
+              this.displayNotes();
+            },
+            () => {
+              this.displayError();
+            }
+          );
+        }
+        //create a method displayError
+        displayError() {
+          const errorDiv = document.createElement("div");
+          errorDiv.textContent = "Oops, something went wrong!";
+          document.body.appendChild(errorDiv);
         }
       };
-      module.exports = NotesView2;
+      module.exports = NotesView;
     }
   });
 
   // notesModel.js
   var require_notesModel = __commonJS({
     "notesModel.js"(exports, module) {
-      var NotesModel2 = class {
+      var NotesModel = class {
         constructor() {
           this.notes = [];
         }
-        setNotes(notes2) {
-          this.notes = notes2;
+        setNotes(notes) {
+          this.notes = notes;
         }
         getNotes() {
           return this.notes;
@@ -89,19 +116,22 @@
           this.notes = [];
         }
       };
-      module.exports = NotesModel2;
+      module.exports = NotesModel;
     }
   });
 
   // index.js
-  var NotesClient = require_notesClient();
-  var NotesView = require_notesView();
-  var NotesModel = require_notesModel();
-  var model = new NotesModel();
-  var client = new NotesClient();
-  var view = new NotesView(client, model);
-  window.addEventListener("load", async () => {
-    view.displayNotesFromApi();
+  document.addEventListener("DOMContentLoaded", (event) => {
+    const NotesClient = require_notesClient();
+    const NotesView = require_notesView();
+    const NotesModel = require_notesModel();
+    const model = new NotesModel();
+    const client = new NotesClient();
+    const view = new NotesView(client, model);
+    window.addEventListener("load", async () => {
+      view.displayNotesFromApi();
+    });
+    view.bindSubmit();
+    console.log(client);
   });
-  view.bindSubmit();
 })();

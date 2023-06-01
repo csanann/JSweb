@@ -9,8 +9,8 @@
 
 class NotesClient {
     //
-    getNotes(callback) {
-        
+    //getNotes(callback) {
+    getNotes(onSuccess, onError) {    
         //using fetch function to send a GET request to notes endpoint of the server
         //fetch returns a Promise that resolves to teh Response object representing the response to the request
         fetch('http://localhost:3000/notes')
@@ -27,24 +27,32 @@ class NotesClient {
         //it then log the error to the console
         //.catch(error => console.error('Error:', error));
         //=========
-        .then(data => callback(data));
+        //.then(data => callback(data));
+        //=======
+        .then(onSuccess)
+        .then(onError);
     }
-    //create async
-    async createNote(content) {
-        const response = await fetch('http://localhost:3000/notes', {
+    
+    createNote(noteContent, onSuccess, onError) {
+        console.log("createNote called with content: ", noteContent);
+        fetch('http://localhost:3000/notes', {
             method: 'POST', //use post method
-            //set headers to indicate we're sending json data
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+            },
             //json body with the content of the new note
-            body: JSON.stringify({ content }),
-        });
-
-        //checks if the request was successful
-        if (!response.ok) {
-            throw new Error('HTTP error ' + response.status);
-        }
-        //return the created note
-        return response.json();
+            body: JSON.stringify({
+                content: noteContent
+            }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(onSuccess)
+        .catch(onError);
     }
 }
 //closes the 'fetchNotes' function definition

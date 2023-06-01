@@ -1,40 +1,61 @@
 // file: notesView.js
 
 class NotesView {
-    constructor(model, client) {
-      this.model = model;
-      this.client = client;
-    }
-  
-    bindSubmit() {
-      const form = document.getElementById('note-form');
+  constructor(model, client) {
+    this.model = model;
+    this.client = client;
+  }
+
+  bindSubmit = () => {
+    const form = document.getElementById('note-form');
+    if (form) {
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
         const noteContent = document.getElementById('note-input').value; // get note content from the form input
-        await this.client.createNote(noteContent); // create the new note in the backend
-        this.displayNotes(); // refresh the view to show the newly created note
+        await this.client.createNote(
+          noteContent,
+          () => {
+            this.displayNotes(); //on success
+          },
+          () => {
+            this.displayError(); //on Error
+          }
+        );
       });
-    }
-  
-    displayNotes() {
-      const notesList = document.getElementById('note-list');
-      //const notes = await this.client.loadNotes(); // get notes from the backend using client
-      notesList.innerHTML = ''; // clear the list before displaying the notes
-      notes.forEach(note => { // display each note
-        const noteElement = document.createElement('li');
-        noteElement.textContent = note.content;
-        notesList.appendChild(noteElement);
-      });
-    }
-  
-    displayNotesFromApi() {
-      //const notes = await this.client.getNotes();
-      this.client.getNotes((notes) => {
-        this.model.setNotes(notes);
-        this.displayNotes();
-      }); 
+    } else {
+      console.log("Form not found!"); // Error log, remove in production
     }
   }
-  
-  module.exports = NotesView;
-  
+
+  displayNotes() {
+    const notesList = document.getElementById('note-list');
+    notesList.innerHTML = ''; // clear the list before displaying the notes
+    this.model.getNotes().forEach(note => { // display each note
+      const noteElement = document.createElement('li');
+      noteElement.textContent = note.content;
+      notesList.appendChild(noteElement);
+    });
+  }
+
+  displayNotesFromApi() {
+    this.client.getNotes((notes) => {
+      this.model.setNotes(notes);
+      this.displayNotes();
+    },
+    () => {
+      this.displayError();
+    });
+  }
+
+  //create a method displayError
+  displayError() {
+    //this method creates a new 'div' element
+    const errorDiv = document.createElement('div');
+    // and sets its text content to 'error msg'
+    errorDiv.textContent = "Oops, something went wrong!";
+    //it appends 'div' to the body of the document
+    document.body.appendChild(errorDiv);
+  }
+}
+
+module.exports = NotesView;

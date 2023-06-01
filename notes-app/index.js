@@ -1,4 +1,6 @@
 //file: index.js
+document.addEventListener('DOMContentLoaded', (event) => {
+
 const NotesClient = require('./notesClient.js');
 const NotesView = require('./notesView.js');
 const NotesModel = require('./notesModel.js');
@@ -18,3 +20,5 @@ window.addEventListener('load', async () => {
 
 // Bind the form submit event to create a new note.
 view.bindSubmit();
+console.log(client);
+});
