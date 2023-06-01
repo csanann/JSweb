@@ -1,39 +1,20 @@
+//file: index.js
+const NotesClient = require('./notesClient.js');
+const NotesView = require('./notesView.js');
+const NotesModel = require('./notesModel.js');
 
-// //console.log('The notes app is running');
-
-// const NotesModel = require('./notesModel');
-const client = new NotesClient();
 const model = new NotesModel();
-const view = new NotesView(model, client);
-// console.log(model.getNotes());
 
-const express = require('express');
-const cors = require('cors');
-const NotesClient = require('./notesClient');
-const app = express();
-const PORT = 3000;
+// Create a new instance of NotesClient.
+const client = new NotesClient();
 
-app.use(cors())
+// Create a new instance of NotesView, passing in the client, model.
+const view = new NotesView(client,model);
 
-let notes = [
-  'This note is coming from the server'
-];
-
-app.use(express.json());
-
-app.get('/notes', (_req, res) => {
-  res.send(JSON.stringify(notes));
+// When the page loads, display the existing notes.
+window.addEventListener('load', async () => {
+  view.displayNotesFromApi();
 });
 
-app.post('/notes', (req, res) => {
-  notes.push(req.body.content)
-  res.send(JSON.stringify(notes));
-});
-
-app.delete('/notes', (req, res) => {
-  notes = [];
-  res.send(JSON.stringify(notes))
-});
-
-app.listen(PORT);
-view.displayNotesFromApi();
+// Bind the form submit event to create a new note.
+view.bindSubmit();

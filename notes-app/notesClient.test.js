@@ -11,7 +11,7 @@ require('jest-fetch-mock').enableFetchMocks()
 //
 describe('NotesClient class', () => {
     //test individual case
-    it('loadNotes method fetches the list of notes', (done) => {
+    it('getNotes method fetches the list of notes', (done) => {
         //instantiate the class
         const notesClient = new NotesClient();
 
@@ -20,7 +20,7 @@ describe('NotesClient class', () => {
             { title: "Note2", content: "Content2" },
         ]));
         //call teh method with a callback function
-        notesClient.loadNotes((returnedDataFromApi) => {
+        notesClient.getNotes((returnedDataFromApi) => {
             //assert teh data from the server contain what it should.
             expect(returnedDataFromApi).toEqual([
                 { title: "Note1", content: "Content1" },

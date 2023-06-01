@@ -9,7 +9,7 @@
 
 class NotesClient {
     //
-    loadNotes(callback) {
+    getNotes(callback) {
         
         //using fetch function to send a GET request to notes endpoint of the server
         //fetch returns a Promise that resolves to teh Response object representing the response to the request
@@ -28,6 +28,23 @@ class NotesClient {
         //.catch(error => console.error('Error:', error));
         //=========
         .then(data => callback(data));
+    }
+    //create async
+    async createNote(content) {
+        const response = await fetch('http://localhost:3000/notes', {
+            method: 'POST', //use post method
+            //set headers to indicate we're sending json data
+            headers: { 'Content-Type': 'application/json' },
+            //json body with the content of the new note
+            body: JSON.stringify({ content }),
+        });
+
+        //checks if the request was successful
+        if (!response.ok) {
+            throw new Error('HTTP error ' + response.status);
+        }
+        //return the created note
+        return response.json();
     }
 }
 //closes the 'fetchNotes' function definition
