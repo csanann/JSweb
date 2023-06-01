@@ -4,6 +4,11 @@ class NotesModel {
     constructor() {
         this.notes = []
     }
+
+    setNotes(notes) {
+        this.notes = notes;
+    }
+    
     getNotes() {
         return this.notes;
     }

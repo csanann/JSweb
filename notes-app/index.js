@@ -2,12 +2,14 @@
 // //console.log('The notes app is running');
 
 // const NotesModel = require('./notesModel');
-// const model = new NotesModel();
-
+const client = new NotesClient();
+const model = new NotesModel();
+const view = new NotesView(model, client);
 // console.log(model.getNotes());
 
 const express = require('express');
 const cors = require('cors');
+const NotesClient = require('./notesClient');
 const app = express();
 const PORT = 3000;
 
@@ -34,3 +36,4 @@ app.delete('/notes', (req, res) => {
 });
 
 app.listen(PORT);
+view.displayNotesFromApi();
