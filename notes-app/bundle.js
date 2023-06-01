@@ -32,6 +32,16 @@
             return response.json();
           }).then(onSuccess).catch(onError);
         }
+        reset(onSuccess, onError) {
+          fetch("http://localhost:3000/notes", {
+            method: "DELETE"
+          }).then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          }).then(onSuccess).catch(onError);
+        }
       };
       module.exports = NotesClient;
     }
@@ -65,12 +75,32 @@
             console.log("Form not found!");
           }
         };
+        bindReset() {
+          const button = document.getElementById("reset-notes-button");
+          if (button) {
+            button.addEventListener("click", () => {
+              this.client.reset(
+                () => {
+                  this.model.setNotes([]);
+                  this.displayNotes();
+                },
+                () => {
+                  this.displayError();
+                }
+              );
+            });
+          } else {
+            console.log("Reset button not found!");
+          }
+        }
         displayNotes() {
           const notesList = document.getElementById("note-list");
           notesList.innerHTML = "";
-          this.model.getNotes().forEach((note) => {
+          this.model.getNotes().forEach(async (note) => {
             const noteElement = document.createElement("li");
-            noteElement.textContent = note.content;
+            const response = await fetch(`https://emojicdn.elk.sh/${encodeURIComponent(note.content)}`);
+            const emoji = await response.text();
+            noteElement.textContent = emoji;
             notesList.appendChild(noteElement);
           });
         }
@@ -133,5 +163,6 @@
     });
     view.bindSubmit();
     console.log(client);
+    view.bindReset();
   });
 })();

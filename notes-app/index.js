@@ -21,4 +21,5 @@ window.addEventListener('load', async () => {
 // Bind the form submit event to create a new note.
 view.bindSubmit();
 console.log(client);
+view.bindReset();
 });

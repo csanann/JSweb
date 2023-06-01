@@ -54,6 +54,19 @@ class NotesClient {
         .then(onSuccess)
         .catch(onError);
     }
+    reset(onSuccess, onError) {
+        fetch('http://localhost:3000/notes', {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if(!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(onSuccess)
+        .catch(onError);
+    }
 }
 //closes the 'fetchNotes' function definition
 //fetchNotes();

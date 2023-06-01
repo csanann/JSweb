@@ -27,15 +27,37 @@ class NotesView {
     }
   }
 
+  bindReset() {
+    const button = document.getElementById('reset-notes-button');
+    if(button) {
+      button.addEventListener('click', () => {
+        this.client.reset(
+          () => {
+            this.model.setNotes([]);
+            this.displayNotes(); //on Success
+          },
+          () => {
+            this.displayError(); //on Error
+          }
+        );
+      });
+    } else {
+      console.log("Reset button not found!"); // Error log, remove in production
+    }
+  }
+
   displayNotes() {
     const notesList = document.getElementById('note-list');
     notesList.innerHTML = ''; // clear the list before displaying the notes
-    this.model.getNotes().forEach(note => { // display each note
-      const noteElement = document.createElement('li');
-      noteElement.textContent = note.content;
-      notesList.appendChild(noteElement);
+    this.model.getNotes().forEach(async note => { // display each note
+        const noteElement = document.createElement('li');
+        const response = await fetch(`https://emojicdn.elk.sh/${encodeURIComponent(note.content)}`);
+        const emoji = await response.text();
+        noteElement.textContent = emoji;
+        notesList.appendChild(noteElement);
     });
-  }
+}
+
 
   displayNotesFromApi() {
     this.client.getNotes((notes) => {
