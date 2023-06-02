@@ -8,10 +8,11 @@
   var require_notesClient = __commonJS({
     "notesClient.js"(exports, module) {
       var NotesClient = class {
-        //
-        //getNotes(callback) {
         getNotes(onSuccess, onError) {
-          fetch("http://localhost:3000/notes").then((response) => response.json()).then(onSuccess).then(onError);
+          fetch("http://localhost:3000/notes").then((response) => response.json()).then(onSuccess).catch((error) => {
+            console.error("Error in getNotes:", error);
+            onError();
+          });
         }
         createNote(noteContent, onSuccess, onError) {
           console.log("createNote called with content: ", noteContent);
@@ -26,21 +27,26 @@
               content: noteContent
             })
           }).then((response) => {
-            if (!response.ok) {
+            if (!response.ok)
               throw new Error("Network response was not ok");
-            }
-            return response.json();
-          }).then(onSuccess).catch(onError);
+            onSuccess();
+          }).catch((error) => {
+            console.error("Error in createNote:", error);
+            onError();
+          });
         }
         reset(onSuccess, onError) {
+          console.log("Reset function called");
           fetch("http://localhost:3000/notes", {
             method: "DELETE"
           }).then((response) => {
-            if (!response.ok) {
+            if (!response.ok)
               throw new Error("Network response was not ok");
-            }
             return response.json();
-          }).then(onSuccess).catch(onError);
+          }).then(onSuccess).catch((error) => {
+            console.log("Error in reset:", error);
+            onError();
+          });
         }
       };
       module.exports = NotesClient;
@@ -94,13 +100,16 @@
           }
         }
         displayNotes() {
-          const notesList = document.getElementById("note-list");
+          const notesList = document.getElementById("notes-list");
           notesList.innerHTML = "";
           this.model.getNotes().forEach(async (note) => {
+            if (!note) {
+              console.log("Note is undefined!", note);
+              return;
+            }
+            console.log(note);
             const noteElement = document.createElement("li");
-            const response = await fetch(`https://emojicdn.elk.sh/${encodeURIComponent(note.content)}`);
-            const emoji = await response.text();
-            noteElement.textContent = emoji;
+            noteElement.textContent = note;
             notesList.appendChild(noteElement);
           });
         }
@@ -117,6 +126,7 @@
         }
         //create a method displayError
         displayError() {
+          console.log("displayError has been called");
           const errorDiv = document.createElement("div");
           errorDiv.textContent = "Oops, something went wrong!";
           document.body.appendChild(errorDiv);
@@ -157,7 +167,7 @@
     const NotesModel = require_notesModel();
     const model = new NotesModel();
     const client = new NotesClient();
-    const view = new NotesView(client, model);
+    const view = new NotesView(model, client);
     window.addEventListener("load", async () => {
       view.displayNotesFromApi();
     });

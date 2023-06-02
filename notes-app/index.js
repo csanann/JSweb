@@ -11,7 +11,7 @@ const model = new NotesModel();
 const client = new NotesClient();
 
 // Create a new instance of NotesView, passing in the client, model.
-const view = new NotesView(client,model);
+const view = new NotesView(model, client);
 
 // When the page loads, display the existing notes.
 window.addEventListener('load', async () => {
